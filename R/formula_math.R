@@ -88,7 +88,7 @@ add_parens_base_formula <- function(base_formula, e1, e2) {
 #'
 #' @param op The operation to perform either as a name or something that can be
 #'   coerced into a name.
-#' @param e1,e2 The formulae to combine
+#' @param e1,e2,x The formulae to operate on
 #' @return \code{e1} and \code{e2} combined by the operation with the
 #'   environment from \code{e1}.  See Details.
 #' @examples
@@ -137,16 +137,18 @@ op_formula <- function(op, e1, e2) {
     if ((length(e1) == 2) &
         (length(e2) == 3)) {
       out <- e2
-      other <- e1
       environment(out) <- environment(e1)
+      first_rhs <- e1
+      second_rhs <- e2[c(1, 3)]
     } else if ((length(e1) == 3) &
                (length(e2) == 2)) {
       out <- e1
-      other <- e2
+      first_rhs <- e1[c(1, 3)]
+      second_rhs <- e2
     } else {
       stop("Unknown how to handle a formula with different lengths that are != 2 or 3") # nocov
     }
-    out[[3]] <- op_formula(op, out[c(1, 3)], other)[[2]]
+    out[[3]] <- op_formula(op, first_rhs, second_rhs)[[2]]
   } else if (length(e1) == length(e2)) {
     out <- e1
     # they are both one- or two-sided
@@ -156,22 +158,15 @@ op_formula <- function(op, e1, e2) {
         find=as.name("+"),
         replace=op
       )
-    if (length(e1) == 2) {
-      # one-sided
-      out[[2]] <-
-        modify_formula(
-          formula=add_parens_base_formula(base_formula, e1[[2]], e2[[2]]),
-          find=list(quote(a), quote(b)),
-          replace=list(e1[[2]], e2[[2]])
-        )
-    } else if (length(e1) == 3) {
+    # one- or two-sided
+    out[[2]] <-
+      modify_formula(
+        formula=add_parens_base_formula(base_formula, e1[[2]], e2[[2]]),
+        find=list(quote(a), quote(b)),
+        replace=list(e1[[2]], e2[[2]])
+      )
+    if (length(e1) == 3) {
       # two-sided
-      out[[2]] <-
-        modify_formula(
-          formula=add_parens_base_formula(base_formula, e1[[2]], e2[[2]]),
-          find=list(quote(a), quote(b)),
-          replace=list(e1[[2]], e2[[2]])
-        )
       out[[3]] <-
         modify_formula(
           formula=add_parens_base_formula(base_formula, e1[[3]], e2[[3]]),
@@ -183,32 +178,37 @@ op_formula <- function(op, e1, e2) {
   out
 }
 
-#' @describeIn op_formula Multiply two formula (identical to \code{(a~b) * (c~d)}
+#' @rdname op_formula
+#' @details \code{multiply_formula} Multiply two formula (identical to \code{(a~b) * (c~d)}
 #' @export
 multiply_formula <- function(e1, e2) {
   op_formula("*", e1, e2)
 }
 
-#' @describeIn op_formula Divide two formula (identical to \code{(a~b) / (c~d)}
+#' @rdname op_formula
+#' @details \code{divide_formula} Divide two formula (identical to \code{(a~b) / (c~d)}
 #' @export
 divide_formula <- function(e1, e2) {
   op_formula("/", e1, e2)
 }
 
-#' @describeIn op_formula Add two formula (identical to \code{(a~b) + (c~d)}
+#' @rdname op_formula
+#' @details \code{add_formula} Add two formula (identical to \code{(a~b) + (c~d)}
 #' @export
 add_formula <- function(e1, e2) {
   op_formula("+", e1, e2)
 }
 
-#' @describeIn op_formula Multiply two formula (identical to \code{(a~b) - (c~d)}
+#' @rdname op_formula
+#' @details \code{subtract_formula} Multiply two formula (identical to \code{(a~b) - (c~d)}
 #' @export
 subtract_formula <- function(e1, e2) {
   op_formula("-", e1, e2)
 }
 
-#' @describeIn op_formula Support generic binary operators and a couple of unary
-#'   operators (see ?Ops).
+#' @rdname op_formula
+#' @details \code{Ops.formula} Supports generic binary operators and a couple of
+#'   unary operators (see ?Ops).
 #' @export
 Ops.formula <- function(e1, e2) {
   if (missing(e2)) {
@@ -219,19 +219,21 @@ Ops.formula <- function(e1, e2) {
   }
 }
 
-#' @describeIn op_formula Support generic unary operators (see ?Math).
+#' @rdname op_formula
+#' @details \code{Math.formula} Supports generic unary operators (see ?Math).
+#' @param ... Ignored.
 #' @export
 Math.formula <- function(x, ...) {
+  if (!(length(x) %in% 2:3)) {
+    # Is this possible?
+    stop("`x` must be a one- or two-sided formula.") # nocov
+  }
   base_formula <-
     modify_formula(quote(a(b)), find=quote(a), replace=as.name(.Generic))
   out <- x
-  if (length(out) == 2) {
-    out[[2]] <- modify_formula(base_formula, find=quote(b), replace=out[[2]])
-  } else if (length(out) == 3) {
-    out[[2]] <- modify_formula(base_formula, find=quote(b), replace=out[[2]])
+  out[[2]] <- modify_formula(base_formula, find=quote(b), replace=out[[2]])
+  if (length(out) == 3) {
     out[[3]] <- modify_formula(base_formula, find=quote(b), replace=out[[3]])
-  } else {
-    stop("Can only work with one- or two-sided formula")
   }
   out
 }
