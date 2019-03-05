@@ -1,6 +1,6 @@
 Package: formulops
 Title: Mathematical Operations on R Formula
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: person("Bill", "Denney", email="wdenney@humanpredictions.com", role=c("aut", "cre"), comment=c(ORCID="0000-0002-5759-428X"))
 Description: Perform mathematical operations on R formula (add, subtract, multiply, etc.) and substitute parts of formula.
 Depends: R (>= 3.5)

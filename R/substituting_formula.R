@@ -56,6 +56,10 @@ as_substituting_formula <- function(x, substitutions) {
 #' @param ... Ignored
 #' @param env The environment for the resulting formula
 #' @return A formula with values substituted.
+#' @name formula_substituting_formula
+NULL
+
+#' @rdname formula_substituting_formula
 #' @export
 formula.substituting_formula <- function(x, ...) {
   ret <- x$base
@@ -70,7 +74,7 @@ formula.substituting_formula <- function(x, ...) {
   ret
 }
 
-#' @rdname formula.substituting_formula as.formula Add the environment
+#' @rdname formula_substituting_formula
 #' @export
 as.formula.substituting_formula <- function(object, env=parent.frame()) {
   ret <- formula.substituting_formula(object)
