@@ -33,6 +33,21 @@ test_that("modify_formula replaces bits", {
   )
 })
 
+test_that("modify_formula adds parentheses correctly", {
+  expect_equal(
+    modify_formula(a~b, find=quote(a), replace=quote(c), add_parens=TRUE),
+    c~b
+  )
+  expect_equal(
+    modify_formula(a~b, find=quote(a), replace=quote(c+d), add_parens=TRUE),
+    (c+d)~b
+  )
+  expect_equal(
+    modify_formula(a~b/c, find=quote(b/c), replace=quote(d), add_parens=TRUE),
+    a~d
+  )
+})
+
 test_that("modify_formula is not sequential", {
   expect_equal(
     modify_formula(a~b/c, find=list(quote(b/c), quote(d)), replace=list(quote(d), quote(e))),

@@ -5,7 +5,7 @@
 \title{Modify a formula by finding some part of it and replacing it with a new
 value.}
 \usage{
-modify_formula(formula, find, replace)
+modify_formula(formula, find, replace, add_parens = FALSE)
 }
 \arguments{
 \item{formula}{The formula to modify (may also be a call)}
@@ -14,6 +14,9 @@ modify_formula(formula, find, replace)
 
 \item{replace}{A call or name (or list thereof) to replace the \code{find}
 values}
+
+\item{add_parens}{Add parentheses if \code{replace} is not a name or if it is
+not already something in parentheses?}
 }
 \value{
 \code{formula} modified

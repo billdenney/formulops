@@ -1,6 +1,6 @@
 #' Modify a formula by finding some part of it and replacing it with a new
 #' value.
-#' 
+#'
 #' @details Replacement occurs at the first match, so if the replacement list
 #'   would modify something in the find list, that change will not occur (make
 #'   two calls to the function for that effect).  See the "Replacement is not
@@ -10,6 +10,8 @@
 #' @param find A call or name (or list thereof) to search for within the formula
 #' @param replace A call or name (or list thereof) to replace the \code{find}
 #'   values
+#' @param add_parens Add parentheses if \code{replace} is not a name or if it is
+#'   not already something in parentheses?
 #' @return \code{formula} modified
 #' @examples
 #' modify_formula(a~b, find=quote(a), replace=quote(c))
@@ -19,13 +21,30 @@
 #' modify_formula(a~b/c, find=list(quote(b/c), quote(d)), replace=list(quote(d), quote(e)))
 #' modify_formula(a~b/c+d, find=list(quote(b/c), quote(d)), replace=list(quote(d), quote(e)))
 #' @export
-modify_formula <- function(formula, find, replace) {
+modify_formula <- function(formula, find, replace, add_parens=FALSE) {
   if (xor(is.list(find), is.list(replace))) {
     stop("Both or neither of `find` and `replace` must be a list.")
   }
   if (!is.list(find)) {
     find <- list(find)
     replace <- list(replace)
+  }
+  if (add_parens) {
+    for (i in seq_along(replace)) {
+      if (is.name(replace[[i]])) {
+        # do nothing
+      } else if (replace[[i]][[1]] == as.name("(")) {
+        # do nothing
+      } else {
+        replace[[i]] <- {
+          tmp <- quote((a))
+          tmp[[2]] <- replace[[i]]
+          tmp
+        }
+      }
+    }
+    # It has now been taken care of.
+    add_parens <- FALSE
   }
   if (length(find) != length(replace)) {
     stop("`find` and `replace` lists must be the same length.")
@@ -46,7 +65,7 @@ modify_formula <- function(formula, find, replace) {
   }
   if (!replaced && length(formula) > 1) {
     for (idx in seq_along(formula)) {
-      formula[[idx]] <- modify_formula(formula[[idx]], find, replace)
+      formula[[idx]] <- modify_formula(formula[[idx]], find, replace, add_parens=add_parens)
     }
   }
   formula
