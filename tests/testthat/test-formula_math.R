@@ -249,6 +249,43 @@ test_that("Expansion works", {
       find=quote(c),
       replace=quote(formulops_expand(d, e))
     ),
-    a~b(d, e)
+    a~b(d, e),
+    info="without names"
+  )
+  expect_equal(
+    modify_formula(
+      a~b(c=d),
+      find=quote(d),
+      replace=quote(formulops_expand(e, f))
+    ),
+    a~b(e, f),
+    info="with names in source"
+  )
+  expect_equal(
+    modify_formula(
+      a~b(c=d),
+      find=quote(d),
+      replace=quote(formulops_expand(g=e, h=f))
+    ),
+    a~b(g=e, h=f),
+    info="with names in replacement"
+  )
+  expect_equal(
+    modify_formula(
+      a~b(d, j)+k,
+      find=quote(d),
+      replace=quote(formulops_expand(g=e, h=f))
+    ),
+    a~b(g=e, h=f, j)+k,
+    info="without names in the longer source"
+  )
+  expect_equal(
+    modify_formula(
+      a~b(c=d, i=j)+k,
+      find=quote(d),
+      replace=quote(formulops_expand(g=e, h=f))
+    ),
+    a~b(g=e, h=f, i=j)+k,
+    info="with names in the longer source"
   )
 })
