@@ -1,13 +1,11 @@
-language: r
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
 cache: packages
-sudo: false
 
 r:
   - release
   - devel
 
-r_github_packages:
-  - r-lib/covr
-
 after_success:
-  - Rscript -e 'cov <- covr::package_coverage()' -e 'print(cov)' -e 'covr::codecov(coverage = cov)'
+  - Rscript -e 'covr::codecov()'
