@@ -241,3 +241,14 @@ test_that("Math works", {
     ~log(b)
   )
 })
+
+test_that("Expansion works", {
+  expect_equal(
+    modify_formula(
+      a~b(c),
+      find=quote(c),
+      replace=quote(formulops_expand(d, e))
+    ),
+    a~b(d, e)
+  )
+})

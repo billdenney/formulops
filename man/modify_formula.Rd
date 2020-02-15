@@ -30,6 +30,10 @@ Replacement occurs at the first match, so if the replacement list
   would modify something in the find list, that change will not occur (make
   two calls to the function for that effect).  See the "Replacement is not
   sequential" examples below.
+
+  A special call can be used to expand a formula.  If an expansion of
+  arguments is desired to change a single function argument to multiple
+  arguments, `formulops_expand()` can be used.  (See the examples.)
 }
 \examples{
 modify_formula(a~b, find=quote(a), replace=quote(c))
@@ -38,4 +42,6 @@ modify_formula(a~b/c, find=quote(b/c), replace=quote(d))
 # Replacement is not sequential
 modify_formula(a~b/c, find=list(quote(b/c), quote(d)), replace=list(quote(d), quote(e)))
 modify_formula(a~b/c+d, find=list(quote(b/c), quote(d)), replace=list(quote(d), quote(e)))
+# Expanding arguments to functions is possible
+modify_formula(a~b(c), find=quote(c), replace=quote(formulops_expand(d, e)))
 }
