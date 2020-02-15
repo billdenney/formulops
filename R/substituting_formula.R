@@ -76,7 +76,7 @@ formula.substituting_formula <- function(x, ...) {
 
 #' @rdname formula_substituting_formula
 #' @export
-as.formula.substituting_formula <- function(object, env=parent.frame()) {
+as.formula.substituting_formula <- function(object, env=environment(object$base)) {
   ret <- formula.substituting_formula(object)
   environment(ret) <- env
   ret

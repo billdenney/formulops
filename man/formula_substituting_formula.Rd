@@ -8,7 +8,7 @@
 \usage{
 \method{formula}{substituting_formula}(x, ...)
 
-as.formula.substituting_formula(object, env = parent.frame())
+as.formula.substituting_formula(object, env = environment(object$base))
 }
 \arguments{
 \item{x, object}{the substituting_formula object}
