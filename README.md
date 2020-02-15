@@ -22,9 +22,25 @@ install.packages("formulops")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+A few common examples of modifying a formula are given below.
 
 ``` r
 library(formulops)
-## basic example code
+# Replace a with c in the formula
+modify_formula(a~b, find=quote(a), replace=quote(c))
+# Replace a with c+d in the formula
+modify_formula(a~b, find=quote(a), replace=quote(c+d))
+# More complex parts can be replaced, too
+modify_formula(a~b/c, find=quote(b/c), replace=quote(d))
+# Multiple replacements can occur simultaneously
+modify_formula(a~b/c+d, find=list(quote(b/c), quote(d)), replace=list(quote(d), quote(e)))
+# Function arguments can be expanded
+modify_formula(a~b(c), find=quote(c), replace=quote(formulops_expand(d, e)))
+```
+
+A substituting formula is a simple way to generate a complex formula from several simpler formulae.  Parentheses are appropriately added, if required.
+
+``` r
+foo <- substituting_formula(y~x1+x2, x1~x3*x4, x2~x5/x6+x7)
+as.formula(foo)
 ```
