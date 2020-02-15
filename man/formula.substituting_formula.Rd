@@ -7,7 +7,7 @@
 \method{formula}{substituting_formula}(x, ...)
 }
 \arguments{
-\item{x, object}{the substituting_formula object}
+\item{x}{the substituting_formula object}
 
 \item{...}{Ignored}
 }

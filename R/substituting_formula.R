@@ -52,14 +52,9 @@ as_substituting_formula <- function(x, substitutions) {
 
 #' Convert a substituting_formula object into a regular formula.
 #' 
-#' @param x,object the substituting_formula object
+#' @param x the substituting_formula object
 #' @param ... Ignored
-#' @param env The environment for the resulting formula
 #' @return A formula with values substituted.
-#' @name formula_substituting_formula
-NULL
-
-#' @rdname formula_substituting_formula
 #' @export
 formula.substituting_formula <- function(x, ...) {
   ret <- x$base
@@ -71,13 +66,5 @@ formula.substituting_formula <- function(x, ...) {
         replace=get_rhs(x$substitutions[[i]])
       )
   }
-  ret
-}
-
-#' @rdname formula_substituting_formula
-#' @export
-as.formula.substituting_formula <- function(object, env=environment(object$base)) {
-  ret <- formula.substituting_formula(object)
-  environment(ret) <- env
   ret
 }
